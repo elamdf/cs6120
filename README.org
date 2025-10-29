@@ -6,3 +6,21 @@ bril's json IR,
 
 terminators (jumps rets etc),
 and making a (label-annotated) CFG to do dead code removal
+
+I wrote a 'springboard' transform, that inserts a call to a springboard function before all calls in the program.
+This is a more silly version of what some dynamic binary instrumentation frameworks do to observe program behavior.
+
+I also wrote a basic benchmark that computes sin via polynomial approximation.
+
+I implemented elamdf/cfg.py in lesson-2 branch of my [[github.com/elamdf/bril][bril fork]] which,
+assuming globally unique labels,
+produces the cfg for a bril program.
+It could probably merge things more aggressively,
+and I don't really understand the 'fold functions into basic blocks' thing because,
+while that makes sense wrt the strict definition of a basic block (called functions are promised to execute),
+it kind of makes it hard to decide when a ffunction is dead,
+since the function label is never referenced regardless of if it's called.
+
+Maybe you just directly look at the code within the blocks though,
+rather than discrete functions.
+We could just flatten the block lists for each function and compute cfg if you wanted to do this kind of analysis.
