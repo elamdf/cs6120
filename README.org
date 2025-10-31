@@ -23,4 +23,9 @@ since the function label is never referenced regardless of if it's called.
 
 Maybe you just directly look at the code within the blocks though,
 rather than discrete functions.
-We could just flatten the block lists for each function and compute cfg if you wanted to do this kind of analysis.
+We could just flatten the block lists for each function and compute cfg if you wanted to do this kind of analysis.xb
+** lesson 3
+lvn is cool! I got it to replace some subexpressions and achieve some dramatic improvements in dynamic variable count on some of the benchmarks.
+
+Some of the benchmarks were claimed 'incorrect' by brench but I spot checked running them manually with brili and they seemd fine.
+The problematic benchmarks for brench seemd to be ones with args/turnt attributes.
