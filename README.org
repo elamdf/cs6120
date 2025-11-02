@@ -24,6 +24,7 @@ since the function label is never referenced regardless of if it's called.
 Maybe you just directly look at the code within the blocks though,
 rather than discrete functions.
 We could just flatten the block lists for each function and compute cfg if you wanted to do this kind of analysis.
+
 ** lesson 3
 lvn is cool! I got it to replace some subexpressions and achieve some dramatic improvements in dynamic variable count on some of the benchmarks.
 
@@ -41,3 +42,64 @@ x dom y <-> if bb x executes, bb y must have executed
 strictly dominates = non-reflexive dominates
 
 immediate domination = A dom B but A doesn't strictly dom anything else that strictly dominates B (direct edges in dominance tree)
+
+dominance frontier = set of elements that are /only/ dominates by A (dominance tree with A as the root and no external edges)
+
+B post-dom A <-> A dom B
+
+natural loop = cycle/SCC with one in-edge
+
+A CFG is reducible iff every backedge has a natural loop.
+- where backedge is A -> B where B dominates A wrt entry block
+- you can use while/break/continue/if just not goto and be reducible
+
+useful to insert a unique preheader block (1 input 1 output) so you can safely move loop invariant code there
+- (pure) expr is loop invariant if definitions for args are either outside of the loop or already marked as loop invariant
+
+a L.I is safe to move a loop invariant assignment to preheader if
+- the assignment dominates all its uses within the loop
+- the assignment dominates all loop exits (this is pretty strict, you can relax it by showing that it won't except and that the variable is dead after the loop)
+
+speculative = doing work that might be wasted
+** lesson 6: SSA
+phi nodes select between variable versions based on control flow
+
+ssa philosophy
+
+definition = variable
+instruction = (static) value (no more numbering for lvn for example) = pointer (don't need a label, since there's one option for the value a variable represents)
+ arguments = in-edges in data flow graph
+
+
+ ssa conversion:
+ - for each variable v, for each block that assigns to that variable b, add phi nodes to all nodes dominated by b, then add those nodes to defs[v] if they aren't there already (since they now assign to v via the phi node)
+ if a block is dominated by another block which contains a variable definition, add a phi node and add that block to the list
+ - variable allocation pseudocode
+   #+begin_src
+  stack[v] is a stack of variable names (for every variable v)
+
+def rename(block):
+  for instr in block:
+    replace each argument to instr with stack[old name]
+
+    replace instr's destination with a new name
+    push that new name onto stack[old name]
+
+  for s in block's successors:
+    for p in s's ϕ-nodes:
+      Assuming p is for a variable v, make it read from stack[v].
+
+  for b in blocks immediately dominated by block:
+    # That is, children in the dominance tree.
+    rename(b)
+
+  pop all the names we just pushed onto the stacks
+
+rename(entry)
+
+   #+end_src
+
+note that you need to set a specific position (i.e. the one indexed by the current basic block)  at the successor's phi node to be stack[v].
+
+convert to non-ssa by, for a phi node ~v =  phi left a right b~,   inserting ~v = a~ at the end of bb ~left~ and ~v = b~ at the end of bb =right= and then deleting it.
+This is not optimal but it's correct
