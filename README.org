@@ -23,7 +23,7 @@ since the function label is never referenced regardless of if it's called.
 
 Maybe you just directly look at the code within the blocks though,
 rather than discrete functions.
-We could just flatten the block lists for each function and compute cfg if you wanted to do this kind of analysis.xb
+We could just flatten the block lists for each function and compute cfg if you wanted to do this kind of analysis.
 ** lesson 3
 lvn is cool! I got it to replace some subexpressions and achieve some dramatic improvements in dynamic variable count on some of the benchmarks.
 
@@ -35,3 +35,9 @@ I implemented the backwards version of the workman algorithm from the lecture's 
 as well as the merge (union) and transfer (see impl) functions to find the live range of variables.
 
 They match the .live outputs for the 3 example (cond, cond-args, and fact) tests in =examples/test/df=. Woohoo!
+** lesson 5
+x dom y <-> if bb x executes, bb y must have executed
+
+strictly dominates = non-reflexive dominates
+
+immediate domination = A dom B but A doesn't strictly dom anything else that strictly dominates B (direct edges in dominance tree)
