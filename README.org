@@ -29,3 +29,9 @@ lvn is cool! I got it to replace some subexpressions and achieve some dramatic i
 
 Some of the benchmarks were claimed 'incorrect' by brench but I spot checked running them manually with brili and they seemd fine.
 The problematic benchmarks for brench seemd to be ones with args/turnt attributes.
+** lesson 4
+dataflow is cool!
+I implemented the backwards version of the workman algorithm from the lecture's pseudocode,
+as well as the merge (union) and transfer (see impl) functions to find the live range of variables.
+
+They match the .live outputs for the 3 example (cond, cond-args, and fact) tests in =examples/test/df=. Woohoo!
