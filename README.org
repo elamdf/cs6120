@@ -18,7 +18,7 @@ produces the cfg for a bril program.
 It could probably merge things more aggressively,
 and I don't really understand the 'fold functions into basic blocks' thing because,
 while that makes sense wrt the strict definition of a basic block (called functions are promised to execute),
-it kind of makes it hard to decide when a ffunction is dead,
+it kind of makes it hard to decide when a function is dead,
 since the function label is never referenced regardless of if it's called.
 
 Maybe you just directly look at the code within the blocks though,
@@ -28,8 +28,8 @@ We could just flatten the block lists for each function and compute cfg if you w
 ** lesson 3
 lvn is cool! I got it to replace some subexpressions and achieve some dramatic improvements in dynamic variable count on some of the benchmarks.
 
-Some of the benchmarks were claimed 'incorrect' by brench but I spot checked running them manually with brili and they seemd fine.
-The problematic benchmarks for brench seemd to be ones with args/turnt attributes.
+Some of the benchmarks were claimed 'incorrect' by brench but I spot checked running them manually with brili and they seemed fine.
+The problematic benchmarks for brench seemed to be ones with args/turnt attributes.
 ** lesson 4
 dataflow is cool!
 I implemented the backwards version of the workman algorithm from the lecture's pseudocode,
@@ -103,3 +103,28 @@ note that you need to set a specific position (i.e. the one indexed by the curre
 
 convert to non-ssa by, for a phi node ~v =  phi left a right b~,   inserting ~v = a~ at the end of bb ~left~ and ~v = b~ at the end of bb =right= and then deleting it.
 This is not optimal but it's correct
+** lesson 7: LLVM
+follow [[https://www.cs.cornell.edu/~asampson/blog/llvm.html][blog]]
+SSA form IR with a nice API for manipulating it
+
+uniform IR across passes
+
+[[https://llvm.org/docs/WritingAnLLVMPass.html][canonical pass writing reference]]
+** Lesson 8: Loop Optimizations
+loop unswitching lifts loop invariant conditionals out of the loop + duplicates the loop for each branch
+
+loop fusion merges loops to inline composition instead of using intermediate structures
+
+inductive variable weakening coarsens the granularity of loop var updates (++ to +=2, etc.)
+
+** lesson 9: Inter-procedural Optimization
+
+call graph
+
+open vs closed (nothing else will interact with these functions) world assumption
+
+inlining, devirtualizing function calls can be good sometimes
+** lesson 10: pointer/alias analysis
+the potential for aliasing makes it very challenging to do things like autovectorization
+
+try to decide yes/no/maybe aliased
